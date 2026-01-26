@@ -1,5 +1,6 @@
 # **SUBSKIP.LUA — README**  
 *(Designed to be clear for everyone, from complete beginners to experienced developers)*
+99% vibe coded
 
 This document is written so anyone can understand it, no matter their background. It includes simple, step-by-step setup instructions for beginners, and it also contains advanced options for power users. If you consider yourself technical, you will find the “Advanced” section useful. If you're not technical (and maybe already nervous), it is not important!
 

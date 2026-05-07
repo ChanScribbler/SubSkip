@@ -184,16 +184,12 @@ local function parse_srt_full(file_path)
         if line == "" then
             in_text_block = false
             line = file:read("*l")
-            goto continue
-        end
-
-        if line:match("^%d+$") and not in_text_block then
+            -- Removed "goto continue" - the loop will naturally iterate
+        elseif line:match("^%d+$") and not in_text_block then
             current_index = tonumber(line)
             line = file:read("*l")
-            goto continue
-        end
-
-        if current_index and not in_text_block and line:match(".*%s*-->%s*.*") then
+            -- Removed "goto continue"
+        elseif current_index and not in_text_block and line:match(".*%s*-->%s*.*") then
             local start_str, end_str = line:match("(.*)%s*-->%s*(.*)")
             if start_str and end_str then
                 start_str = start_str:gsub("%s*-*%s*$", "")
@@ -221,12 +217,14 @@ local function parse_srt_full(file_path)
                     text      = full_text,
                 })
                 current_index = nil
-                goto continue
+                -- Removed "goto continue"
+            else
+                line = file:read("*l")
             end
+        else
+            line = file:read("*l")
         end
-
-        line = file:read("*l")
-        ::continue::
+        -- Removed ::continue:: label
     end
 
     file:close()

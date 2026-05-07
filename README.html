@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2026-01-27 Tue 04:47 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="author" content="Samiddhi" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#subskip.lua-readme">1. <b>SUBSKIP.LUA &#x2014; README</b></a>
+<ul>
+<li><a href="#what-this-does">1.1. WHAT THIS DOES</a></li>
+<li><a href="#who-its-for">1.2. WHO IT'S FOR</a></li>
+<li><a href="#what-is-mpv">1.3. WHAT IS MPV?</a></li>
+<li><a href="#easy-setup-for-beginners">1.4. EASY SETUP (FOR BEGINNERS)</a></li>
+<li><a href="#how-to-use-it-simple">1.5. HOW TO USE IT (SIMPLE)</a></li>
+<li><a href="#advanced">1.6. ADVANCED</a>
+<ul>
+<li><a href="#start-with-skipping-already-turned-on">1.6.1. 1. Start with skipping already turned ON</a></li>
+<li><a href="#configuration-options">1.6.2. 2. Configuration options</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting-faq">1.7. TROUBLESHOOTING / FAQ</a></li>
+<li><a href="#a-few-technical-details">1.8. A FEW TECHNICAL DETAILS</a></li>
+<li><a href="#license">1.9. LICENSE</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-subskip.lua-readme" class="outline-2">
+<h2 id="subskip.lua-readme"><span class="section-number-2">1.</span> <b>SUBSKIP.LUA &#x2014; README</b></h2>
+<div class="outline-text-2" id="text-subskip.lua-readme">
+<p>
+<i>(Designed to be clear for everyone, from complete beginners to
+experienced developers)</i> 99% vibe coded
+</p>
+
+<p>
+This document is written so anyone can understand it, no matter their
+background. It includes simple, step-by-step setup instructions for
+beginners, and it also contains advanced options for power users. If you
+consider yourself technical, you will find the “Advanced” section
+useful. If you're not technical (and maybe already nervous), it is not
+important!
+</p>
+
+<hr />
+</div>
+
+<div id="outline-container-what-this-does" class="outline-3">
+<h3 id="what-this-does"><span class="section-number-3">1.1.</span> WHAT THIS DOES</h3>
+<div class="outline-text-3" id="text-what-this-does">
+<p>
+Subskip.lua is a small add-on for the mpv video player, and most video
+players that are built on mpv.<br />
+When it is turned on, mpv will only play the parts of a video where
+subtitles are visible.<br />
+Whenever there is a gap with no subtitles, the video automatically jumps
+forward to the next subtitle.
+</p>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-who-its-for" class="outline-3">
+<h3 id="who-its-for"><span class="section-number-3">1.2.</span> WHO IT'S FOR</h3>
+<div class="outline-text-3" id="text-who-its-for">
+<p>
+This script is for people who want:<br />
+</p>
+<ul class="org-ul">
+<li>Faster watching with no silent gaps<br /></li>
+<li>A study tool for subtitles and dialogue<br /></li>
+<li>A way to skip to spoken parts automatically<br /></li>
+<li>A more efficient way to review content</li>
+</ul>
+
+<p>
+It was designed with language learning in mind, inspired by Lamont from
+<a href="https://www.youtube.com/@daysandwords">Days and Words</a> (specifically
+<a href="https://www.youtube.com/watch?v=DRXeM07TVww">this video</a>). Go follow
+his advice if you're learning a language!
+</p>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-what-is-mpv" class="outline-3">
+<h3 id="what-is-mpv"><span class="section-number-3">1.3.</span> WHAT IS MPV?</h3>
+<div class="outline-text-3" id="text-what-is-mpv">
+<p>
+mpv is a video player.<br />
+It plays video files, just like VLC or Windows Media Player.<br />
+The difference is that mpv is very good at playing video, and it allows
+small add-ons (called “scripts”) to change how playback works. This file
+is one of those add-ons.
+</p>
+
+<p>
+You do NOT need to:<br />
+</p>
+<ul class="org-ul">
+<li>use a command line<br /></li>
+<li>type commands<br /></li>
+<li>understand how mpv works internally</li>
+</ul>
+
+<p>
+If mpv (or an mpv-based player) is installed, you can just:<br />
+</p>
+<ul class="org-ul">
+<li>double-click a video file<br /></li>
+<li>drag a video onto the player<br /></li>
+<li>press play and watch</li>
+</ul>
+
+<p>
+This script does not replace your video player. It only adds an optional
+behavior to it.
+</p>
+
+<p>
+If mpv is a bit too minimalist for your taste, there's good news: You do
+not have to use mpv directly.<br />
+There are normal-looking video players that use mpv internally. They
+behave like regular apps, with menus and settings, but still support mpv
+scripts like this one.
+</p>
+
+<p>
+<b>Recommended options:</b>
+</p>
+
+<p>
+<b>macOS:</b><br />
+</p>
+<ul class="org-ul">
+<li>IINA<br /></li>
+</ul>
+<p>
+A normal Mac video player that uses mpv internally.
+</p>
+
+<p>
+<b>Linux:</b><br />
+</p>
+<ul class="org-ul">
+<li>Celluloid<br /></li>
+</ul>
+<p>
+A simple video player that uses mpv directly.
+</p>
+
+<p>
+<b>Windows:</b><br />
+</p>
+<ul class="org-ul">
+<li>mpv.net<br /></li>
+</ul>
+<p>
+A standard Windows video player built on mpv.
+</p>
+
+<p>
+No matter which of these you use:<br />
+</p>
+<ul class="org-ul">
+<li>This script is installed in mpv's normal “scripts” folder<br /></li>
+<li>You do not install it inside IINA, Celluloid, or mpv.net<br /></li>
+<li>Those apps automatically read mpv's script folder</li>
+</ul>
+
+<p>
+Once the file is in the correct place and the player is restarted, your
+video player will know what to do.<br />
+You do not need to understand anything beyond that.
+</p>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-easy-setup-for-beginners" class="outline-3">
+<h3 id="easy-setup-for-beginners"><span class="section-number-3">1.4.</span> EASY SETUP (FOR BEGINNERS)</h3>
+<div class="outline-text-3" id="text-easy-setup-for-beginners">
+<p>
+Ask an AI bot like Gemini for help if you're not sure how to do this.
+</p>
+
+<ol class="org-ol">
+<li>Download the file <code>subskip.lua</code><br /></li>
+
+<li><p>
+Put it in mpv's “scripts” folder.
+</p>
+
+<p>
+If you are on a typical system, the folder is here:
+</p>
+
+<ul class="org-ul">
+<li>Linux / macOS: <code>~/.config/mpv/scripts/</code><br /></li>
+<li>Windows: <code>%APPDATA%\mpv\scripts\</code></li>
+</ul>
+
+<p>
+So the final location should look like:<br />
+<code>~/.config/mpv/scripts/subskip.lua</code>
+</p></li>
+
+<li>Restart mpv.</li>
+</ol>
+
+<p>
+That's it. The script is now available.
+</p>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-how-to-use-it-simple" class="outline-3">
+<h3 id="how-to-use-it-simple"><span class="section-number-3">1.5.</span> HOW TO USE IT (SIMPLE)</h3>
+<div class="outline-text-3" id="text-how-to-use-it-simple">
+<p>
+Once the script is loaded, you turn it on and off using a key:
+</p>
+
+<ul class="org-ul">
+<li>Press <b>;</b> (semicolon)<br />
+This toggles subtitle skipping ON or OFF.</li>
+<li>Press <b>B</b> to create and “invisible” subtitle track (e.g. no subtitles)
+but still allows skipping (since this program needs subtitles in order
+to know when to skip!)
+<ul class="org-ul">
+<li>This <i>might</i> require you to restart mpv in order to access it!</li>
+</ul></li>
+</ul>
+
+<p>
+When skipping is enabled:<br />
+</p>
+<ul class="org-ul">
+<li>mpv will only play during subtitle intervals.<br /></li>
+<li>Whenever subtitles disappear, mpv jumps forward to the next</li>
+</ul>
+<p>
+subtitle.<br />
+</p>
+<ul class="org-ul">
+<li>An on-screen message confirms the state (ON or OFF).</li>
+</ul>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-advanced" class="outline-3">
+<h3 id="advanced"><span class="section-number-3">1.6.</span> ADVANCED</h3>
+<div class="outline-text-3" id="text-advanced">
+<p>
+These options are optional. Beginners can ignore this section.
+</p>
+</div>
+
+<div id="outline-container-start-with-skipping-already-turned-on" class="outline-4">
+<h4 id="start-with-skipping-already-turned-on"><span class="section-number-4">1.6.1.</span> 1. Start with skipping already turned ON</h4>
+<div class="outline-text-4" id="text-start-with-skipping-already-turned-on">
+<p>
+You can launch mpv so that the script begins enabled automatically.<br />
+Use this command:
+</p>
+
+<pre class="example" id="org7d07a49">
+mpv --script-opts=subskip-enabled=yes video.mkv
+</pre>
+
+<p>
+Legacy syntax also works:
+</p>
+
+<pre class="example" id="orgc054624">
+mpv --script-opts=subskip/enabled=yes video.mkv
+</pre>
+</div>
+</div>
+
+<div id="outline-container-configuration-options" class="outline-4">
+<h4 id="configuration-options"><span class="section-number-4">1.6.2.</span> 2. Configuration options</h4>
+<div class="outline-text-4" id="text-configuration-options">
+<p>
+You can create a settings file if you want to change defaults.<br />
+Create this file:
+</p>
+
+<pre class="example" id="org754e13d">
+~/.config/mpv/script-opts/subskip.conf
+</pre>
+
+<p>
+Options you can set:
+</p>
+
+<pre class="example" id="orgf395225">
+enabled=no
+buffer=0.1
+keybinding=;
+blank_key=B
+</pre>
+
+<ul class="org-ul">
+<li><b>enabled</b><br />
+Set to <code>yes</code> to start already enabled.<br /></li>
+<li><b>buffer</b><br />
+Adds extra time before and after each subtitle (in seconds).<br />
+Example: <code>0.1</code> adds 0.1 seconds.<br /></li>
+<li><b>keybinding</b><br />
+Which key toggles skipping.<br />
+Default: <code>;</code><br /></li>
+<li><b>blank<sub>key</sub></b><br />
+Generates a blank subtitle track (explained below).<br />
+Default: <code>B</code></li>
+</ul>
+
+<hr />
+</div>
+</div>
+</div>
+
+<div id="outline-container-troubleshooting-faq" class="outline-3">
+<h3 id="troubleshooting-faq"><span class="section-number-3">1.7.</span> TROUBLESHOOTING / FAQ</h3>
+<div class="outline-text-3" id="text-troubleshooting-faq">
+<p>
+<b>Q: “It doesn't skip anything.”</b><br />
+<b>A:</b><br />
+</p>
+<ul class="org-ul">
+<li>Make sure subtitles are turned on and selected.<br /></li>
+<li>If no subtitles are found, the script cannot work.</li>
+</ul>
+
+<p>
+<b>Q: “I pressed ; but nothing happened.”</b><br />
+<b>A:</b><br />
+</p>
+<ul class="org-ul">
+<li>The script is not loaded or the keybinding was changed.<br /></li>
+<li>Check that the file is in the correct folder.</li>
+</ul>
+
+<p>
+<b>Q: “It feels slow with embedded subtitles.”</b><br />
+<b>A:</b><br />
+Embedded subtitles are slower because mpv has to scan them. External
+<code>.srt</code> files work faster.
+</p>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-a-few-technical-details" class="outline-3">
+<h3 id="a-few-technical-details"><span class="section-number-3">1.8.</span> A FEW TECHNICAL DETAILS</h3>
+<div class="outline-text-3" id="text-a-few-technical-details">
+<ul class="org-ul">
+<li>The script uses the active subtitle track (<code>sid</code>) and automatically
+updates if you switch subtitle tracks.<br /></li>
+<li>External <code>.srt</code> files are preferred for accuracy. Embedded subtitles
+use a slower fallback scan.</li>
+</ul>
+
+<hr />
+</div>
+</div>
+
+<div id="outline-container-license" class="outline-3">
+<h3 id="license"><span class="section-number-3">1.9.</span> LICENSE</h3>
+<div class="outline-text-3" id="text-license">
+<p>
+MIT License
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Samiddhi</p>
+<p class="date">Created: 2026-01-27 Tue 04:47</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

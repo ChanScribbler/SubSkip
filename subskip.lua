@@ -1,6 +1,7 @@
 -- subskip.lua
 -- Subtitle-driven temporal truncation script for mpv
 -- with added blank (invisible) subtitle track generator
+-- 99% vibe-code.
 
 local mp      = require 'mp'
 local options = require 'mp.options'
@@ -24,7 +25,10 @@ if opts.enabled == "no" then
     end
 end
 
-local enabled     = (opts.enabled == "yes")
+-- using `state' rather than plain `enabled' so that when the CLI uses
+-- a script-opt that sets `enabled', it is not permanently fixed to
+-- that value. I.e. so you can always still enable/disable subskip.
+local state = { enabled = (opts.enabled == "yes") }
 local buffer      = tonumber(opts.buffer) or 0.1
 local cache       = {}          -- sid → merged intervals
 local merged      = {}          -- currently active merged intervals
@@ -441,7 +445,7 @@ end
 -- ────────────────────────────────────────────────────────────────────────────────
 
 local function on_time_pos(_, pos)
-    if not enabled or not pos or #merged == 0 then return end
+    if not state.enabled or not pos or #merged == 0 then return end
     local duration = mp.get_property_number("duration") or 0
     if pos >= duration - 1 then return end
     local in_interval = false
@@ -467,8 +471,8 @@ end
 
 
 local function toggle()
-    enabled = not enabled
-    if not enabled then
+    state.enabled = not state.enabled
+    if not state.enabled then
         mp.osd_message("Subtitle Skip: OFF")
         return
     end
@@ -484,7 +488,7 @@ local function toggle()
         msg.warn("subskip: No subtitles detected after all attempts" ..
                  (attempted_select and " (including track selection)" or ""))
         mp.osd_message("Subtitle Skip: No subtitles detected!")
-        enabled = false
+        state.enabled = false
         return
     end
     mp.osd_message("Subtitle Skip: ON")

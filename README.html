@@ -24,10 +24,13 @@ this tool might have other uses as well but I cant think of any.</p>
 write your own code to change how it plays videos. This file is one of
 those add-ons. You don’t need to know how to code in order to use this
 feature, don’t worry.</p>
-<p>If mpv (or an mpv-based player) is installed, you can either: - drag
-a video onto the mpv icon - right click a video file and open it with
-mpv (or your player built on top of mpv) And then press play and
-watch</p>
+<p>If mpv (or an mpv-based player) is installed, you can either:</p>
+<ul>
+<li><p>drag a video onto the mpv icon</p></li>
+<li><p>right click a video file and open it with mpv (or your player
+built on top of mpv)</p></li>
+</ul>
+<p>And then press play and watch</p>
 <p>If normal mpv is a bit too minimalist for your taste, there are
 plenty normal-looking video players out there that use mpv internally. I
 don’t use any of them but my informants claim some of them are quite
@@ -36,12 +39,21 @@ pleasant to use.</p>
 and know nothing about them. This is purely AI generated advice so tell
 me if anything here is wrong or if I’m eggregiously leaving out a good
 option.</p>
-<p><strong>macOS:</strong> - IINA A normal Mac video player that uses
-mpv internally.</p>
-<p><strong>Linux:</strong> - Celluloid A simple video player that uses
-mpv directly.</p>
-<p><strong>Windows:</strong> - mpv.net A standard Windows video player
-built on mpv.</p>
+<p><strong>macOS:</strong></p>
+<ul>
+<li>IINA</li>
+</ul>
+<p>A normal Mac video player that uses mpv internally.</p>
+<p><strong>Linux:</strong></p>
+<ul>
+<li>Celluloid</li>
+</ul>
+<p>A simple video player that uses mpv directly.</p>
+<p><strong>Windows:</strong></p>
+<ul>
+<li>mpv.net</li>
+</ul>
+<p>A standard Windows video player built on mpv.</p>
 <p>No matter which of these you use, this script is installed in mpv’s
 normal “scripts” folder because these apps automatically read mpv’s
 script folder</p>
@@ -54,36 +66,45 @@ your video player will know what to do.</p>
 <li>Download the file <code>subskip.lua</code></li>
 <li>Put it in mpv’s “scripts” folder.</li>
 </ol>
-<p>The folder is probably here: - Linux / macOS:
-<code>~/.config/mpv/scripts/</code> which is equivalent to
-<code>/Users/YOURUSERNAME/.config/mpv/scripts/</code> -
-<code>.config</code> is a “hidden” file so you may have to type
+<p>The folder is probably here:</p>
+<ul>
+<li>Linux / macOS: <code>~/.config/mpv/scripts/</code> which is
+equivalent to <code>/Users/YOURUSERNAME/.config/mpv/scripts/</code>
+<ul>
+<li><code>.config</code> is a “hidden” file so you may have to type
 <code>Cmd+Shift+.</code> (<code>⇧⌘.</code>) in order to see it from
 within your home folder (<code>~</code> or
 <code>/Users/YOURUSERNAME</code>) which you can jump to by typing
-<code>⇧⌘H</code> in the Finder application. - Windows:
-<code>%APPDATA%\mpv\scripts\</code></p>
-<p>So the final location should look like:
-<code>~/.config/mpv/scripts/subskip.lua</code> or (on windows)
-<code>%APPDATA%\mpv\scripts\subskip.lua</code></p>
+<code>⇧⌘H</code> in the Finder application.</li>
+</ul></li>
+<li>Windows: <code>%APPDATA%\mpv\scripts\</code></li>
+</ul>
+<p>So the final location should look like:</p>
+<p><code>~/.config/mpv/scripts/subskip.lua</code></p>
+<p>or (on windows)</p>
+<p><code>%APPDATA%\mpv\scripts\subskip.lua</code></p>
 <ol start="3" type="1">
 <li>Restart mpv.</li>
 </ol>
-<p>That’s it. The script shoul now be available.</p>
+<p>That’s it. The script should now be available.</p>
 <hr />
 <h2 id="how-to-use-it-simple">HOW TO USE IT (SIMPLE)</h2>
 <p>Once the script is loaded, you can:</p>
 <ul>
 <li>Press <strong>;</strong> (semicolon)to toggle skipping ON or
 OFF.</li>
-<li>Press <strong>B</strong> to create and “invisible” subtitle track
-(e.g. no subtitles) but still allows skipping (since this program needs
-subtitles in order to know when to skip!)</li>
+<li>Press <strong>B</strong> to create an “invisible” subtitle track
+(e.g. no subtitles) that still allows skipping (since this program needs
+subtitles in order to know when to skip!)
+<ul>
 <li>This <em>might</em> require you to restart mpv in order to access
 it!</li>
+<li>In hindsight this is a useless feature and you can just change the
+font size of your subtitle to 0 for the same effect.</li>
+</ul></li>
 </ul>
 <p>Now whenever there is no subtitle, mpv will skip forward to the
-beginning of the next</p>
+beginning of the next one</p>
 <p>An on-screen message should confirm the state (ON or OFF).</p>
 <hr />
 <h2 id="advanced">ADVANCED</h2>
@@ -91,8 +112,9 @@ beginning of the next</p>
 don’t know what it’s talking about.</p>
 <h3 id="start-with-skipping-already-turned-on">1. Start with skipping
 already turned ON</h3>
-<p>You can launch mpv so that the script begins enabled automatically.
-Use this command in your terminal emulator’s command-line:</p>
+<p>You can launch mpv so that the script begins enabled
+automatically.</p>
+<p>Use this command in your terminal emulator’s command-line:</p>
 <pre><code>mpv --script-opts=subskip-enabled=yes video.mkv</code></pre>
 <p>Legacy syntax also works:</p>
 <pre><code>mpv --script-opts=subskip/enabled=yes video.mkv</code></pre>
@@ -120,14 +142,14 @@ Default: <code>;</code></li>
 </ul>
 <hr />
 <h2 id="troubleshooting-faq">TROUBLESHOOTING / FAQ</h2>
-<p><strong>Q: “It doesn’t skip anything.”</strong> <strong>A:</strong> -
-Make sure subtitles are turned on and selected. - If no subtitles are
-found, the script cannot work.</p>
-<p><strong>Q: “I pressed ; but nothing happened.”</strong>
-<strong>A:</strong> - The script is not loaded or the keybinding was
+<p><strong>Q: “It doesn’t skip anything.”</strong></p>
+<p><strong>A:</strong> - Make sure subtitles are turned on and selected.
+- If no subtitles are found, the script cannot work.</p>
+<p><strong>Q: “I pressed ; but nothing happened.”</strong></p>
+<p><strong>A:</strong> - The script is not loaded or the keybinding was
 changed. - Check that the file is in the correct folder.</p>
-<p><strong>Q: “It feels slow with embedded subtitles.”</strong>
-<strong>A:</strong> Embedded subtitles are slower because mpv has to
+<p><strong>Q: “It feels slow with embedded subtitles.”</strong></p>
+<p><strong>A:</strong> Embedded subtitles are slower because mpv has to
 scan them. External <code>.srt</code> files work faster.</p>
 <hr />
 <h2 id="a-few-technical-details">A FEW TECHNICAL DETAILS</h2>

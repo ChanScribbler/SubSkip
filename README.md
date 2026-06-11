@@ -28,8 +28,11 @@ It plays video files, just like VLC or Windows Media Player.
 The difference is that mpv is very customizable, allowing you to write your own code to change how it plays videos. This file is one of those add-ons. You don't need to know how to code in order to use this feature, don't worry.
 
 If mpv (or an mpv-based player) is installed, you can either:
+
 - drag a video onto the mpv icon
+
 - right click a video file and open it with mpv (or your player built on top of mpv)
+
 And then press play and watch
 
 If normal mpv is a bit too minimalist for your taste, there are plenty normal-looking video players out there that use mpv internally. I don't use any of them but my informants claim some of them are quite pleasant to use.
@@ -38,15 +41,21 @@ If normal mpv is a bit too minimalist for your taste, there are plenty normal-lo
 I have not used any of these and know nothing about them. This is purely AI generated advice so tell me if anything here is wrong or if I'm eggregiously leaving out a good option.
 
 **macOS:**
+
 - IINA
+
 A normal Mac video player that uses mpv internally.
 
 **Linux:**
+
 - Celluloid
+
 A simple video player that uses mpv directly.
 
 **Windows:**
+
 - mpv.net
+
 A standard Windows video player built on mpv.
 
 No matter which of these you use, this script is installed in mpv’s normal “scripts” folder because these apps automatically read mpv’s script folder
@@ -62,18 +71,22 @@ Once the file is in the correct place and the player is restarted, your video pl
 2. Put it in mpv’s “scripts” folder.
 
  The folder is probably here: 
+ 
  - Linux / macOS: `~/.config/mpv/scripts/` which is equivalent to `/Users/YOURUSERNAME/.config/mpv/scripts/`
    - `.config` is a "hidden" file so you may have to type `Cmd+Shift+.` (`⇧⌘.`) in order to see it from within your home folder (`~` or `/Users/YOURUSERNAME`) which you can jump to by typing `⇧⌘H` in the Finder application.
  - Windows: `%APPDATA%\mpv\scripts\`
-
+ 
  So the final location should look like:
+ 
  `~/.config/mpv/scripts/subskip.lua`
+ 
  or (on windows)
+ 
  `%APPDATA%\mpv\scripts\subskip.lua`
 
 3. Restart mpv.
 
-That’s it. The script shoul now be available.
+That’s it. The script should now be available.
 
 ---
 
@@ -82,10 +95,11 @@ That’s it. The script shoul now be available.
 Once the script is loaded, you can:
 
 - Press **;** (semicolon)to toggle skipping ON or OFF.
-- Press **B** to create and "invisible" subtitle track (e.g. no subtitles) but still allows skipping (since this program needs subtitles in order to know when to skip!)
-- This *might* require you to restart mpv in order to access it!
+- Press **B** to create an "invisible" subtitle track (e.g. no subtitles) that still allows skipping (since this program needs subtitles in order to know when to skip!)
+  - This *might* require you to restart mpv in order to access it!
+  - In hindsight this is a useless feature and you can just change the font size of your subtitle to 0 for the same effect.
 
-Now whenever there is no subtitle, mpv will skip forward to the beginning of the next 
+Now whenever there is no subtitle, mpv will skip forward to the beginning of the next one
 
 An on-screen message should confirm the state (ON or OFF).
 
@@ -98,6 +112,7 @@ These options are optional. Feel free to ignore this section if you don't know w
 ### 1. Start with skipping already turned ON
 
 You can launch mpv so that the script begins enabled automatically.
+
 Use this command in your terminal emulator's command-line:
 
 ```
@@ -116,11 +131,13 @@ You can create a settings file if you want to change defaults.
 Create this file:
 
 (on mac/linux)
+
 ```
 ~/.config/mpv/script-opts/subskip.conf
 ```
 
 (on windows)
+
 ```
 %APPDATA%\mpv\scripts\subskip.conf
 ```
@@ -134,16 +151,12 @@ keybinding=;
 blank_key=B
 ```
 
-- **enabled**
-Set to `yes` to start every video with subskip enabled.
-- **buffer**
-Adds extra time before and after each subtitle (in seconds).
+- **enabled** Set to `yes` to start every video with subskip enabled.
+- **buffer** Adds extra time before and after each subtitle (in seconds).
 Example: `0.1` adds 0.1 seconds.
-- **keybinding**
-Which key toggles the feature on/off.
+- **keybinding** Which key toggles the feature on/off.
 Default: `;`
-- **blank_key**
-Generates a blank subtitle track (explained below).
+- **blank_key** Generates a blank subtitle track (explained below).
 Default: `B`
 
 ---
@@ -151,16 +164,21 @@ Default: `B`
 ## TROUBLESHOOTING / FAQ
 
 **Q: “It doesn’t skip anything.”**
+
 **A:**
+
 - Make sure subtitles are turned on and selected.
 - If no subtitles are found, the script cannot work.
 
 **Q: “I pressed ; but nothing happened.”**
+
 **A:**
+
 - The script is not loaded or the keybinding was changed.
 - Check that the file is in the correct folder.
 
 **Q: “It feels slow with embedded subtitles.”**
+
 **A:**
 Embedded subtitles are slower because mpv has to scan them. External `.srt` files work faster.
 

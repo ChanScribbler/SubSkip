@@ -9,10 +9,13 @@ local utils   = require 'mp.utils'
 local msg     = require 'mp.msg'
 
 local opts = {
-    enabled    = "no",
-    buffer     = 0.1,
-    keybinding = ";",
-    blank_key  = "B",
+    enabled          = "no",
+    buffer           = 0.1,
+    keybinding       = ";",
+    ffmpeg_path      = "ffmpeg",
+    export_video_key = "E",
+    export_audio_key = "e",
+    crop_srt         = "yes",
 }
 options.read_options(opts, "subskip")
 
@@ -32,9 +35,9 @@ local state = { enabled = (opts.enabled == "yes") }
 local buffer      = tonumber(opts.buffer) or 0.1
 local cache       = {}          -- sid → merged intervals
 local merged      = {}          -- currently active merged intervals
-local keybinding  = opts.keybinding
-local blank_key   = opts.blank_key
-
+local keybinding       = opts.keybinding
+local export_video_key = opts.export_video_key
+local export_audio_key = opts.export_audio_key
 
 -- ────────────────────────────────────────────────────────────────────────────────
 -- Helpers
@@ -173,6 +176,15 @@ local function parse_srt(file_path)
 end
 
 
+local function sec_to_time(sec)
+    local total_sec = math.floor(sec)
+    local h = math.floor(total_sec / 3600)
+    local m = math.floor((total_sec % 3600) / 60)
+    local s = total_sec % 60
+    local ms = math.floor((sec - total_sec) * 1000 + 0.5)
+    return string.format("%02d:%02d:%02d,%03d", h, m, s, ms)
+end
+
 local function parse_srt_full(file_path)
     local file = io.open(file_path, "r")
     if not file then return nil end
@@ -188,16 +200,26 @@ local function parse_srt_full(file_path)
         if line == "" then
             in_text_block = false
             line = file:read("*l")
-            -- Removed "goto continue" - the loop will naturally iterate
         elseif line:match("^%d+$") and not in_text_block then
             current_index = tonumber(line)
             line = file:read("*l")
-            -- Removed "goto continue"
         elseif current_index and not in_text_block and line:match(".*%s*-->%s*.*") then
             local start_str, end_str = line:match("(.*)%s*-->%s*(.*)")
             if start_str and end_str then
                 start_str = start_str:gsub("%s*-*%s*$", "")
                 end_str   = end_str:gsub("^%s+", ""):gsub("%s+$", "")
+                
+                local function to_seconds(t_str)
+                    local h, m, sec, ms = t_str:match("(%d+):(%d+):(%d+),(%d+)")
+                    if h and m and sec and ms then
+                        return tonumber(h)*3600 + tonumber(m)*60 + tonumber(sec) + tonumber(ms)/1000
+                    end
+                    return 0
+                end
+                
+                local start_sec = to_seconds(start_str)
+                local end_sec = to_seconds(end_str)
+
                 local text_lines = {}
                 line = file:read("*l")
                 while line do
@@ -216,100 +238,219 @@ local function parse_srt_full(file_path)
                 local full_text = table.concat(text_lines, "\n")
                 table.insert(subs, {
                     index     = current_index or (#subs + 1),
-                    start_str = start_str,
-                    end_str   = end_str,
+                    start_sec = start_sec,
+                    end_sec   = end_sec,
                     text      = full_text,
                 })
                 current_index = nil
-                -- Removed "goto continue"
             else
                 line = file:read("*l")
             end
         else
             line = file:read("*l")
         end
-        -- Removed ::continue:: label
     end
 
     file:close()
     return #subs > 0 and subs or nil
 end
 
+local function crop_srt_file(target_srt, segments, output_srt, actual_durs)
+    local target_subs = parse_srt_full(target_srt)
+    if not target_subs then return end
 
-local function write_blank_srt(subs, dst_path)
-    local out = io.open(dst_path, "w")
-    if not out then return false end
+    local new_subs = {}
+    local cumulative_time = 0.0
 
-    local placeholder = "    "  -- four spaces — nonzero length, invisible
+    for i, seg in ipairs(segments) do
+        local seg_start = seg.start
+        local seg_end = seg.end_
+        local seg_duration = actual_durs[i] or (seg_end - seg_start)
 
-    for _, sub in ipairs(subs) do
-        out:write(sub.index .. "\n")
-        out:write(sub.start_str .. " --> " .. sub.end_str .. "\n")
-        out:write(placeholder .. "\n")
-        out:write("\n")
+        for _, sub in ipairs(target_subs) do
+            if not (sub.end_sec <= seg_start or sub.start_sec >= seg_end) then
+                local clip_start = math.max(sub.start_sec, seg_start)
+                local clip_end = math.min(sub.end_sec, seg_end)
+                if clip_end - clip_start > 0 then
+                    local new_start = clip_start - seg_start + cumulative_time
+                    local new_end = clip_end - seg_start + cumulative_time
+                    table.insert(new_subs, {start = new_start, end_ = new_end, text = sub.text})
+                end
+            end
+        end
+        cumulative_time = cumulative_time + seg_duration
     end
 
-    out:close()
-    return true
+    if #new_subs == 0 then return end
+
+    table.sort(new_subs, function(a, b) return a.start < b.start end)
+
+    local f = io.open(output_srt, "w")
+    if not f then return end
+
+    for i, sub in ipairs(new_subs) do
+        f:write(i .. "\n")
+        f:write(sec_to_time(sub.start) .. " --> " .. sec_to_time(sub.end_) .. "\n")
+        f:write(sub.text .. "\n\n")
+    end
+    f:close()
 end
 
-
 -- ────────────────────────────────────────────────────────────────────────────────
--- Generate blank subtitle track
+-- Export dialogue-only video
 -- ────────────────────────────────────────────────────────────────────────────────
 
-local function generate_blank()
+local function get_active_srt_path()
     local sid = mp.get_property_number("sid")
-    if not sid or sid == 0 then
-        msg.info("subskip: No active subtitle track")
-        return
-    end
-
+    if not sid or sid == 0 then return nil end
     local tracks = mp.get_property_native("track-list") or {}
-    local track = nil
     for _, t in ipairs(tracks) do
         if t.id == sid and t.type == "sub" then
-            track = t
+            if t.external and t["external-filename"] then
+                local video_path = mp.get_property("path") or ""
+                local video_dir = utils.split_path(video_path)[1] or mp.get_property("working-directory") or "."
+                return utils.join_path(video_dir, t["external-filename"])
+            end
             break
         end
     end
+    return nil
+end
 
-    if not track or not track.external or not track["external-filename"] then
-        msg.info("subskip: Current subtitle is not an external .srt file")
+local function export_media(mode)
+    local sid = mp.get_property_number("sid") or 0
+    if sid == 0 then
+        mp.osd_message("No subtitle track selected!")
         return
     end
 
-    local video_path = mp.get_property("path") or ""
-    local video_dir  = utils.split_path(video_path)[1] or mp.get_property("working-directory") or "."
-    local src_path   = utils.join_path(video_dir, track["external-filename"])
+    if #merged == 0 then
+        update_merged()
+        if #merged == 0 then
+            mp.osd_message("No subtitles found for export!")
+            return
+        end
+    end
 
-    local subs = parse_srt_full(src_path)
-    if not subs then
-        msg.warn("subskip: Could not parse source SRT for blanking")
+    local ffmpeg = opts.ffmpeg_path or "ffmpeg"
+    local res = mp.command_native({
+        name = "subprocess",
+        playback_only = false,
+        capture_stdout = true,
+        args = {ffmpeg, "-version"}
+    })
+
+    if res.status ~= 0 then
+        mp.osd_message("ffmpeg not found! Install it or set ffmpeg_path in subskip.conf", 5)
         return
     end
 
-    local dir, basename = utils.split_path(src_path)
-    local stem = get_stem(basename)
-    local synth_lang = "xx"
-
-    local new_basename = stem .. "." .. synth_lang .. ".srt"
-    local dst_path = utils.join_path(dir, new_basename)
-    local suffix = 0
-
-    while io.open(dst_path, "r") do
-        suffix = suffix + 1
-        new_basename = stem .. "." .. synth_lang .. "-" .. suffix .. ".srt"
-        dst_path = utils.join_path(dir, new_basename)
+    local video_path = mp.get_property("path")
+    if not video_path then
+        mp.osd_message("No video loaded!")
+        return
     end
 
-    if write_blank_srt(subs, dst_path) then
-        mp.commandv("sub-add", dst_path)
-        mp.osd_message("Blank subtitle track created:\n" .. new_basename)
-        msg.info("subskip: Generated blank track → " .. dst_path)
-    else
-        msg.warn("subskip: Failed to write blank SRT to " .. dst_path)
+    local dir, filename = utils.split_path(video_path)
+    local stem = get_stem(filename)
+    if not stem then stem = "output" end
+    
+    local ext = mode == "audio" and "_dialogue_only.m4a" or "_dialogue_only.mkv"
+    local out_path = utils.join_path(dir, stem .. ext)
+    local out_srt = utils.join_path(dir, stem .. ext:gsub("%.%w+$", ".srt"))
+    
+    mp.osd_message(mode == "audio" and "Cropping audio..." or "Cropping video...", 3)
+    
+    local active_srt_path = nil
+    if opts.crop_srt == "yes" then
+        active_srt_path = get_active_srt_path()
     end
+
+    local temp_dir = os.tmpname()
+    os.remove(temp_dir)
+    local success, err = os.execute('mkdir "' .. temp_dir .. '"')
+    if not success then
+        temp_dir = utils.join_path(dir, ".subskip_tmp")
+        os.execute('mkdir "' .. temp_dir .. '"')
+    end
+
+    local temp_files = {}
+    local actual_durs = {}
+    local current_segment = 1
+
+    local function process_next_segment()
+        if current_segment > #merged then
+            local list_file = utils.join_path(temp_dir, 'concat_list.txt')
+            local f = io.open(list_file, "w")
+            for _, tf in ipairs(temp_files) do
+                f:write(string.format("file '%s'\n", tf:gsub("'", "'\\''")))
+            end
+            f:close()
+
+            mp.command_native_async({
+                name = "subprocess",
+                playback_only = false,
+                args = {ffmpeg, "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", "-y", out_path}
+            }, function(succ, result, e)
+                for _, tf in ipairs(temp_files) do os.remove(tf) end
+                os.remove(list_file)
+                os.execute('rmdir "' .. temp_dir .. '"')
+
+                if succ and result.status == 0 then
+                    mp.osd_message("Export complete: " .. out_path, 5)
+                    msg.info("Exported to " .. out_path)
+                    
+                    if active_srt_path then
+                        crop_srt_file(active_srt_path, merged, out_srt, actual_durs)
+                        msg.info("Cropped SRT saved to " .. out_srt)
+                    end
+                else
+                    mp.osd_message("Export failed! Check console for details.", 5)
+                    msg.error("ffmpeg export failed.")
+                end
+            end)
+            return
+        end
+
+        local iv = merged[current_segment]
+        local dur = iv.end_ - iv.start
+        local temp_file = utils.join_path(temp_dir, string.format("temp_%04d%s", current_segment, mode == "audio" and ".m4a" or ".mp4"))
+        table.insert(temp_files, temp_file)
+        
+        local args = {ffmpeg, "-ss", tostring(iv.start), "-i", video_path, "-t", tostring(dur)}
+        if mode == "video" then
+            for _, v in ipairs({"-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", "-c:a", "aac"}) do table.insert(args, v) end
+        else
+            for _, v in ipairs({"-vn", "-c:a", "aac"}) do table.insert(args, v) end
+        end
+        for _, v in ipairs({"-avoid_negative_ts", "make_zero", "-y", temp_file}) do table.insert(args, v) end
+
+        mp.command_native_async({
+            name = "subprocess",
+            playback_only = false,
+            args = args
+        }, function(succ, res, e)
+            if succ and res.status == 0 then
+                local probe_res = mp.command_native({
+                    name = "subprocess",
+                    capture_stdout = true,
+                    args = {"ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", temp_file}
+                })
+                local actual_dur = dur
+                if probe_res.status == 0 and probe_res.stdout then
+                    local val = tonumber(probe_res.stdout)
+                    if val then actual_dur = val end
+                end
+                table.insert(actual_durs, actual_dur)
+            else
+                table.insert(actual_durs, dur)
+            end
+            current_segment = current_segment + 1
+            process_next_segment()
+        end)
+    end
+
+    process_next_segment()
 end
 
 
@@ -504,4 +645,5 @@ mp.observe_property("sid", "native", function() update_merged() end)
 mp.observe_property("track-list", "native", function() cache = {} update_merged() end)
 mp.register_event("file-loaded", function() cache = {} update_merged() end)
 mp.add_key_binding(keybinding, "toggle_subskip", toggle, {repeatable = false})
-mp.add_key_binding(blank_key, "generate_blank_sub", generate_blank, {repeatable = false})
+mp.add_key_binding(export_video_key, "export_dialogue_video", function() export_media("video") end, {repeatable = false})
+mp.add_key_binding(export_audio_key, "export_dialogue_audio", function() export_media("audio") end, {repeatable = false})

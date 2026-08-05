@@ -94,10 +94,11 @@ That’s it. The script should now be available.
 
 Once the script is loaded, you can:
 
-- Press **;** (semicolon)to toggle skipping ON or OFF.
-- Press **B** to create an "invisible" subtitle track (e.g. no subtitles) that still allows skipping (since this program needs subtitles in order to know when to skip!)
-  - This *might* require you to restart mpv in order to access it!
-  - In hindsight this is a useless feature and you can just change the font size of your subtitle to 0 for the same effect.
+- Press **;** (semicolon) to toggle skipping ON or OFF.
+- Press **E** to export the video using ffmpeg, producing a video containing only the dialogue sections.
+- Press **e** to export only the audio using ffmpeg, producing an audio file containing only the dialogue sections.
+  - Exporting requires ffmpeg to be installed. If not found, mpv will display an on-screen message to install it or configure `ffmpeg_path` in `subskip.conf`.
+  - By default, exporting will also create a cropped subtitle file perfectly synced to the new media.
 
 Now whenever there is no subtitle, mpv will skip forward to the beginning of the next one
 
@@ -148,7 +149,10 @@ Options you can set:
 enabled=no
 buffer=0.1
 keybinding=;
-blank_key=B
+ffmpeg_path=ffmpeg
+export_video_key=E
+export_audio_key=e
+crop_srt=yes
 ```
 
 - **enabled** Set to `yes` to start every video with subskip enabled.
@@ -156,8 +160,14 @@ blank_key=B
 Example: `0.1` adds 0.1 seconds.
 - **keybinding** Which key toggles the feature on/off.
 Default: `;`
-- **blank_key** Generates a blank subtitle track (explained below).
-Default: `B`
+- **ffmpeg_path** The path to the ffmpeg executable if it's not in your system PATH.
+Default: `ffmpeg`
+- **export_video_key** Generates a dialogue-only cut of the video using ffmpeg.
+Default: `E`
+- **export_audio_key** Generates a dialogue-only cut of the audio using ffmpeg.
+Default: `e`
+- **crop_srt** Set to `no` to disable generating a cropped SRT file alongside the exported media.
+Default: `yes`
 
 ---
 

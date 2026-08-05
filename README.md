@@ -15,15 +15,13 @@ When it is turned on, mpv will only play the parts of a video with subtitles.
 
 ## WHO IT’S FOR
 
-This was designed with language learning in mind, inspired by [this video](https://www.youtube.com/watch?v=DRXeM07TVww) by Lamont from [Days and Words](https://www.youtube.com/@daysandwords). Go follow his advice if you're learning a language! I guess this tool might have other uses as well but I cant think of any.
+This was designed with language learning in mind, inspired by [this video](https://www.youtube.com/watch?v=DRXeM07TVww) by [Days and Words](https://www.youtube.com/@daysandwords). I guess this tool might have other uses as well but I can't be bothered to try to think of any.
 
 ---
 
 ## WHAT IS MPV?
 
-mpv is a video player.
-
-It plays video files, just like VLC or Windows Media Player.
+mpv is a video player. That means it plays videos.
 
 The difference is that mpv is very customizable, allowing you to write your own code to change how it plays videos. This file is one of those add-ons. You don't need to know how to code in order to use this feature, don't worry.
 
@@ -38,34 +36,28 @@ And then press play and watch
 If normal mpv is a bit too minimalist for your taste, there are plenty normal-looking video players out there that use mpv internally. I don't use any of them but my informants claim some of them are quite pleasant to use.
 
 **Recommended options:**
-I have not used any of these and know nothing about them. This is purely AI generated advice so tell me if anything here is wrong or if I'm eggregiously leaving out a good option.
+I have not used any of these and know nothing about them. Please tell me if anything here is wrong or if I'm egregiously leaving out any other good options.
 
 **macOS:**
 
 - IINA
 
-A normal Mac video player that uses mpv internally.
-
 **Linux:**
 
 - Celluloid
-
-A simple video player that uses mpv directly.
 
 **Windows:**
 
 - mpv.net
 
-A standard Windows video player built on mpv.
-
-No matter which of these you use, this script is installed in mpv’s normal “scripts” folder because these apps automatically read mpv’s script folder
+No matter which of these you use, this script *should* (again, I haven't checked. Only with vanilla MacOS mpv) be installed in mpv’s normal “scripts” folder because these apps automatically read mpv’s script folder
 
 Once the file is in the correct place and the player is restarted, your video player will know what to do.
 
 ---
 
 ## EASY SETUP
-*Ask an AI like Gemini or GPT for help if you get stuck.*
+*Ask an AI like Gemini or GPT for help if you get stuck. Be sure to send it this whole instructions file.*
 
 1. Download the file `subskip.lua`
 2. Put it in mpv’s “scripts” folder.

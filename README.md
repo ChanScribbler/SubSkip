@@ -91,6 +91,7 @@ Once the script is loaded, you can:
 - Press **e** to export only the audio using ffmpeg, producing an audio file containing only the dialogue sections.
   - Exporting requires ffmpeg to be installed. If not found, mpv will display an on-screen message to install it or configure `ffmpeg_path` in `subskip.conf`.
   - By default, exporting will also create a cropped subtitle file perfectly synced to the new media.
+  - The script fully respects dynamic subtitle alignments! If you adjust the subtitle delay (using the `z` or `x` keys) during playback, the live skipping and media exporting tools will always perfectly align with your newly shifted subtitles.
 
 Now whenever there is no subtitle, mpv will skip forward to the beginning of the next one
 

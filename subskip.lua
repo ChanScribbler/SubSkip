@@ -255,7 +255,7 @@ local function parse_srt_full(file_path)
     return #subs > 0 and subs or nil
 end
 
-local function crop_srt_file(target_srt, segments, output_srt, actual_durs)
+local function crop_srt_file(target_srt, segments, offset, output_srt, actual_durs)
     local target_subs = parse_srt_full(target_srt)
     if not target_subs then return end
 
@@ -268,9 +268,12 @@ local function crop_srt_file(target_srt, segments, output_srt, actual_durs)
         local seg_duration = actual_durs[i] or (seg_end - seg_start)
 
         for _, sub in ipairs(target_subs) do
-            if not (sub.end_sec <= seg_start or sub.start_sec >= seg_end) then
-                local clip_start = math.max(sub.start_sec, seg_start)
-                local clip_end = math.min(sub.end_sec, seg_end)
+            local shifted_sub_start = sub.start_sec + offset
+            local shifted_sub_end = sub.end_sec + offset
+
+            if not (shifted_sub_end <= seg_start or shifted_sub_start >= seg_end) then
+                local clip_start = math.max(shifted_sub_start, seg_start)
+                local clip_end = math.min(shifted_sub_end, seg_end)
                 if clip_end - clip_start > 0 then
                     local new_start = clip_start - seg_start + cumulative_time
                     local new_end = clip_end - seg_start + cumulative_time
@@ -366,6 +369,15 @@ local function export_media(mode)
         active_srt_path = get_active_srt_path()
     end
 
+    local delay = mp.get_property_number("sub-delay") or 0
+    local shifted_segments = {}
+    for _, iv in ipairs(merged) do
+        table.insert(shifted_segments, {
+            start = math.max(0, iv.start + delay),
+            end_ = math.max(0, iv.end_ + delay)
+        })
+    end
+
     local temp_dir = os.tmpname()
     os.remove(temp_dir)
     local success, err = os.execute('mkdir "' .. temp_dir .. '"')
@@ -379,7 +391,7 @@ local function export_media(mode)
     local current_segment = 1
 
     local function process_next_segment()
-        if current_segment > #merged then
+        if current_segment > #shifted_segments then
             local list_file = utils.join_path(temp_dir, 'concat_list.txt')
             local f = io.open(list_file, "w")
             for _, tf in ipairs(temp_files) do
@@ -401,7 +413,7 @@ local function export_media(mode)
                     msg.info("Exported to " .. out_path)
                     
                     if active_srt_path then
-                        crop_srt_file(active_srt_path, merged, out_srt, actual_durs)
+                        crop_srt_file(active_srt_path, shifted_segments, delay, out_srt, actual_durs)
                         msg.info("Cropped SRT saved to " .. out_srt)
                     end
                 else
@@ -412,8 +424,16 @@ local function export_media(mode)
             return
         end
 
-        local iv = merged[current_segment]
+        local iv = shifted_segments[current_segment]
         local dur = iv.end_ - iv.start
+        
+        if dur <= 0 then
+            table.insert(actual_durs, 0)
+            current_segment = current_segment + 1
+            process_next_segment()
+            return
+        end
+
         local temp_file = utils.join_path(temp_dir, string.format("temp_%04d%s", current_segment, mode == "audio" and ".m4a" or ".mp4"))
         table.insert(temp_files, temp_file)
         
@@ -589,9 +609,13 @@ local function on_time_pos(_, pos)
     if not state.enabled or not pos or #merged == 0 then return end
     local duration = mp.get_property_number("duration") or 0
     if pos >= duration - 1 then return end
+    
+    local delay = mp.get_property_number("sub-delay") or 0
+    local effective_pos = pos - delay
+
     local in_interval = false
     for _, iv in ipairs(merged) do
-        if pos >= iv.start and pos <= iv.end_ then
+        if effective_pos >= iv.start and effective_pos <= iv.end_ then
             in_interval = true
             break
         end
@@ -599,13 +623,13 @@ local function on_time_pos(_, pos)
     if not in_interval then
         local next_start = nil
         for _, iv in ipairs(merged) do
-            if iv.start > pos then
+            if iv.start > effective_pos then
                 next_start = iv.start
                 break
             end
         end
         if next_start then
-            mp.set_property_number("time-pos", next_start)
+            mp.set_property_number("time-pos", next_start + delay)
         end
     end
 end
